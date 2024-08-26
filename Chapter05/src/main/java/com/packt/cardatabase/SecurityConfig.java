@@ -29,11 +29,9 @@ public class SecurityConfig {
 	private final AuthenticationFilter authenticationFilter;
 	private final AuthEntryPoint exceptionHandler;
 
-	public SecurityConfig(UserDetailsServiceImpl userDetailsService, AuthenticationFilter authenticationFilter,
-			AuthEntryPoint exceptionHandler) {
+	public SecurityConfig(UserDetailsServiceImpl userDetailsService, AuthenticationFilter authenticationFilter) {
 		this.userDetailsService = userDetailsService;
 		this.authenticationFilter = authenticationFilter;
-		this.exceptionHandler = exceptionHandler;
 	}
 
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -48,7 +46,8 @@ public class SecurityConfig {
 				.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
 						.requestMatchers(HttpMethod.POST, "/login").permitAll().anyRequest().authenticated())
 				.addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-				.exceptionHandling((exceptionHandling) -> exceptionHandling.authenticationEntryPoint(exceptionHandler));
+				.exceptionHandling((exceptionHandling) -> exceptionHandling
+				.accessDeniedPage("/errors/access-denied"));
 		return http.build();
 	}
 
